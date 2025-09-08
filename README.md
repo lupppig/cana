@@ -45,3 +45,6 @@ Projects like Gin, Fiber, and Echo — but stripped down to the bare metal.
 This project isn’t production-ready (and probably never will be). The main goal is learning, experimenting, and having fun. If you want something battle-tested, check out [Gin](https://gin-gonic.com/).
 
 ---
+
+
+# I Live and breath my Code. I Live and Breath My Weed
