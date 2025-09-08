@@ -1,16 +1,16 @@
 # Cana 🌿
 
-**Cana** is an HTTP server written from scratch in Go — without relying on Go’s built-in `net/http` package.
+**Cana** is an HTTP server written from scratch in Go  without relying on Go’s built-in `net/http` package.
 
 The goal isn’t to build the next revolutionary Go framework or compete with the likes of Gin, Echo, or Fiber. Instead, **Cana** is my personal sandbox  a place to break things, rebuild them, and deepen my understanding of Go’s internals, networking, and how web servers actually work under the hood.
 
-Think of it less like a product, more like a journey. 🚀
+Think of it less like a product, more like a journey. 
 
 ---
 
 ## Why the Name?
 
-“Cana” is short for *cannabis*. No, it won’t roll your joints for you 😅 — but just like a good session, this project is here to chill, experiment, and spark new ideas. I guess I just love my weed… LOL.
+“Cana” is short for *cannabis*. No, it won’t roll your joints for you 😅  but just like a good session, this project is here to chill, experiment, and spark new ideas. I guess I just love my weed… LOL.
 
 ---
 
