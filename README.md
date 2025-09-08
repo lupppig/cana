@@ -36,7 +36,7 @@ Think of it less like a product, more like a journey.
 
 ## Inspirations
 
-Projects like Gin, Fiber, and Echo — but stripped down to the bare metal.
+Projects like Gin, Fiber, and Echo but stripped down to the bare metal.
 
 ---
 
