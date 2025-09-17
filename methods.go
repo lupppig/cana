@@ -1,7 +1,6 @@
 package cana
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"errors"
@@ -28,7 +27,7 @@ func newRequest() *Request {
 
 func (r *Request) httpMethods(data []byte) error {
 	var headerBuilder strings.Builder
-	var contentBuilder strings.Builder = strings.Builder{}
+	var contentBuilder bytes.Buffer
 	var method string
 	var err error
 
@@ -74,13 +73,13 @@ func (r *Request) httpMethods(data []byte) error {
 
 	if content_len, ok := r.Headers["Content-Length"]; ok {
 		n, _ := strconv.Atoi(content_len.(string))
-		cwr := bufio.NewWriterSize(&contentBuilder, n)
 		data = data[idx+len(delim):]
-		_, err = cwr.Write(data)
+		_, err = contentBuilder.Write(data[:n])
 		if err != nil {
 			return err
 		}
 	}
+	
 	switch method {
 	case "GET":
 	case "POST":
