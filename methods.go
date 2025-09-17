@@ -78,8 +78,9 @@ func (r *Request) httpMethods(data []byte) error {
 		if err != nil {
 			return err
 		}
+		r.Body = contentBuilder.Bytes()
 	}
-	
+
 	switch method {
 	case "GET":
 	case "POST":
