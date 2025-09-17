@@ -3,7 +3,6 @@ package cana
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -28,6 +27,11 @@ type Cana struct {
 	wg        *sync.WaitGroup
 }
 
+type CanaWriter interface {
+	Writer(w []byte) error
+	Reader(r []byte) error
+}
+
 func Canabis(addr string) *Cana {
 	if addr == "" {
 		addr = ":http"
@@ -49,11 +53,11 @@ func (c *Cana) ServeCana() error {
 	}
 	c.cListener = ln
 
-	c.wg.Add(1)
-	go func() {
-		defer c.wg.Done()
-		c.acceptCana()
-	}()
+	// c.wg.Add(1)
+	// go func() {
+	// 	defer c.wg.Done()
+	c.acceptCana()
+	// }()
 
 	return nil
 }
@@ -96,7 +100,6 @@ func (c *Cana) handleCana(conn net.Conn) {
 	}()
 
 	for {
-
 		buf := make([]byte, 1024)
 		_, err := conn.Read(buf)
 		if err != nil {
@@ -110,12 +113,19 @@ func (c *Cana) handleCana(conn net.Conn) {
 			continue
 		}
 
-		_, err = conn.Write([]byte(fmt.Sprintf("server received client message: %v", conn.RemoteAddr().String())))
-		if err != nil {
-			log.Println(err.Error())
-			continue
-		}
+		req := newRequest()
+		req.httpMethods(buf)
 	}
+}
+
+// write to client
+func (c *Cana) Writer() error {
+	return nil
+}
+
+// read from client
+func (c *Cana) Reader() error {
+	return nil
 }
 
 func (c *Cana) Shutdown(ctx context.Context) {
