@@ -72,7 +72,7 @@ func (r *Request) httpMethods(data []byte) error {
 		}
 	}
 
-	if content_len, ok := r.Headers["Content-Type"]; ok {
+	if content_len, ok := r.Headers["Content-Length"]; ok {
 		n, _ := strconv.Atoi(content_len.(string))
 		cwr := bufio.NewWriterSize(&contentBuilder, n)
 		data = data[idx+len(delim):]
