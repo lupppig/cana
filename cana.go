@@ -116,6 +116,7 @@ func (c *Cana) handleCana(conn net.Conn) {
 		req := newRequest()
 		req.httpMethodsParser(buf)
 	}
+
 }
 
 // write to client
