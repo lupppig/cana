@@ -1,15 +1,17 @@
 package cana
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"errors"
+	"io"
 	"strconv"
 	"strings"
 )
 
 type Request struct {
-	Headers        map[string]interface{}
+	Headers        map[string]string
 	Protocol       string
 	Method         string
 	Body           []byte
@@ -21,11 +23,11 @@ type Request struct {
 
 func newRequest() *Request {
 	return &Request{
-		Headers: make(map[string]interface{}),
+		Headers: make(map[string]string),
 	}
 }
 
-func (r *Request) httpMethods(data []byte) error {
+func (r *Request) httpMethodsParser(data []byte) error {
 	var headerBuilder strings.Builder
 	var contentBuilder bytes.Buffer
 	var method string
@@ -61,26 +63,58 @@ func (r *Request) httpMethods(data []byte) error {
 			continue
 		}
 		if strings.Contains(headers, ":") {
-			spl_head := strings.Split(headers, ":")
+			spl_head := strings.SplitN(headers, ":", 2)
 			key, value := spl_head[0], spl_head[1]
-			r.Headers[key] = value
+			key = strings.ToLower(strings.TrimSpace(key))
+			r.Headers[key] = strings.TrimSpace(value)
 			continue
 		}
 		if headers != " " && headers != "" {
-			r.Headers[headers] = struct{}{}
+			headers = strings.ToLower(strings.TrimSpace(headers))
+			r.Headers[headers] = ""
 		}
 	}
 
-	if content_len, ok := r.Headers["Content-Length"]; ok {
-		n, _ := strconv.Atoi(content_len.(string))
+	if t_encode, ok := r.Headers["transfer-encoding"]; ok {
+		var reader = bufio.NewReader(strings.NewReader(string(data[idx+len(delim):])))
+		switch t_encode {
+		case "chunked":
+			for {
+				line, err := reader.ReadString('\n')
+				if err != nil {
+					return err
+				}
+				hexStr := strings.TrimSpace(line)
+				size, _ := strconv.ParseInt(hexStr, 16, 64)
+
+				if size == 0 {
+					reader.ReadString('\n')
+					break
+				}
+
+				buf := make([]byte, size)
+				if _, err := io.ReadFull(reader, buf); err != nil {
+					return err
+				}
+				if _, err := contentBuilder.Write(buf); err != nil {
+					return err
+				}
+				if _, err := reader.ReadString('\n'); err != nil {
+					return err
+				}
+			}
+		}
+	} else if content_len, ok := r.Headers["content-length"]; ok {
+		n, _ := strconv.Atoi(content_len)
 		data = data[idx+len(delim):]
-		_, err = contentBuilder.Write(data[:n])
-		if err != nil {
-			return err
+		for _, byt := range data[:n] {
+			contentBuilder.WriteByte(byt)
 		}
-		r.Body = contentBuilder.Bytes()
 	}
 
+	r.Body = contentBuilder.Bytes()
+
+	contentBuilder.Reset()
 	switch method {
 	case "GET":
 	case "POST":
@@ -88,7 +122,6 @@ func (r *Request) httpMethods(data []byte) error {
 	case "PATCH":
 	case "DELETE":
 	}
-
 	return nil
 }
 
