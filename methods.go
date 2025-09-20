@@ -18,6 +18,7 @@ type Request struct {
 	Routes         string
 	Path           string
 	QueryParameter string
+	reader         io.ReadCloser
 	Ctx            context.Context
 }
 
@@ -114,7 +115,6 @@ func (r *Request) httpMethodsParser(data []byte) error {
 
 	r.Body = contentBuilder.Bytes()
 
-	contentBuilder.Reset()
 	switch method {
 	case "GET":
 	case "POST":
@@ -122,6 +122,7 @@ func (r *Request) httpMethodsParser(data []byte) error {
 	case "PATCH":
 	case "DELETE":
 	}
+	defer contentBuilder.Reset()
 	return nil
 }
 

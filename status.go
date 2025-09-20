@@ -206,5 +206,6 @@ func (s Status) StatusText() string {
 	case StatusNetworkAuthenticationRequired:
 		return "511 Network Authentication Required"
 	}
+
 	return ""
 }

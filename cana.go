@@ -112,21 +112,14 @@ func (c *Cana) handleCana(conn net.Conn) {
 			log.Println(err.Error())
 			continue
 		}
-
 		req := newRequest()
 		req.httpMethodsParser(buf)
+
+		resp := NewResponse(conn)
+
+		resp.Writer("Hello from this server...\n")
 	}
 
-}
-
-// write to client
-func (c *Cana) Writer() error {
-	return nil
-}
-
-// read from client
-func (c *Cana) Reader() error {
-	return nil
 }
 
 func (c *Cana) Shutdown(ctx context.Context) {
